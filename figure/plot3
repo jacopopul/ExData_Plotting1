@@ -1,0 +1,39 @@
+#Load Data, setwd in folder which contains data
+raw_dat = read.table("household_power_consumption.txt",
+                     sep = ";", dec = ".", header = T, colClasses = "character")
+
+#Select data by Date
+library(chron)
+xdates = raw_dat$Date
+xtimes = raw_dat$Time
+raw_dat$Dt = chron(dates = xdates, times = xtimes,
+                   format = c(dates = "d/m/Y", times = "h:m:s"))
+
+xdat = raw_dat[which(dates(raw_dat$Dt) == "01/02/2007" | dates(raw_dat$Dt) == "02/02/2007"),]
+
+#Trasform character variables in numeric variables
+for(i in 3:(ncol(xdat)-1)){
+  xdat[,i] = as.numeric(xdat[,i])
+  
+}
+
+x_arg = seq(1, 60*24*3, by = 60*24)
+day =  c(as.character(weekdays(unique(dates(xdat$Dt)))), as.character(weekdays(unique(dates(xdat$Dt))[2] + 1)))
+
+png("plot3.png", width = 480, height = 480)
+
+plot(xdat$Sub_metering_1, type = "l", col = 1, 
+     ylab = "Energy sub metering", xaxt = "n", , xlab = NA)
+
+lines(xdat$Sub_metering_2, type = "l", col = 2)
+lines(xdat$Sub_metering_3, type = "l", col = 4)
+
+axis(1, x_arg, labels = day)
+
+
+legend("topright", c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"),
+       col = c(1, 2, 4), lty = 1)
+
+dev.off()
+
+
