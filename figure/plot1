@@ -1,0 +1,20 @@
+#Load Data, setwd in folder which contains data
+raw_dat = read.table("household_power_consumption.txt",
+                     sep = ";", dec = ".", header = T, colClasses = "character")
+
+#Select data by Date
+xdat = raw_dat[which(raw_dat$Date == "01/02/2007" | raw_dat$Date == "02/02/2007"),]
+
+#Trasform factor variables in numeric variables
+for(i in 3:ncol(xdat)){
+  xdat[,i] = as.numeric(xdat[,i])
+  
+}
+
+
+png("plot1.png", width = 480, height = 480)
+
+hist(xdat$Global_active_power, col = 2, 
+     xlab = "Global Active Power (kilowatts)", main = "Global Active Power") 
+
+dev.off()
